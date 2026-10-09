@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="rahgozar-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="50%" stop-color="#818cf8" />
+      <stop offset="100%" stop-color="#34d399" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="100" height="100" rx="28" fill="#0d111a" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+  <path d="M50 20 L76 35 L76 65 L50 80 L24 65 L24 35 Z" stroke="url(#rahgozar-grad)" stroke-width="3" fill="none" filter="url(#glow)"/>
+  <circle cx="50" cy="50" r="10" fill="url(#rahgozar-grad)" />
+  <path d="M40 50 Q50 35 60 50 Q50 65 40 50" stroke="#ffffff" stroke-width="2" fill="none"/>
+</svg>

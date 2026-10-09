@@ -1,0 +1,69 @@
+{
+  "name": "rahgozar",
+  "version": "1.0.0",
+  "description": "Rahgozar - Intelligent Censorship-Resistant Open Internet Access Client for Windows",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "package": "npm run build && electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "com.rahgozar.app",
+    "productName": "Rahgozar",
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": ["nsis", "portable"],
+      "icon": "public/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "Rahgozar"
+    }
+  },
+  "keywords": [
+    "rahgozar",
+    "anti-censorship",
+    "circumvention",
+    "sing-box",
+    "tor",
+    "vless",
+    "iran",
+    "network-diagnosis",
+    "windows"
+  ],
+  "author": "Rahgozar Core Team",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.54.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "sql.js": "^1.14.2",
+    "tailwind-merge": "^3.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/sql.js": "^1.4.11",
+    "@vitejs/plugin-react": "^6.1.2",
+    "autoprefixer": "^10.6.1",
+    "electron": "^44.7.0",
+    "electron-builder": "^26.15.3",
+    "postcss": "^8.5.29",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "vite-plugin-electron": "^1.1.2",
+    "vite-plugin-electron-renderer": "^1.0.0",
+    "vitest": "^5.0.3"
+  }
+}
