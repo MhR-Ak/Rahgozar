@@ -101,61 +101,47 @@ app.on('window-all-closed', () => {
 
 function seedInitialProfiles(db: DatabaseManager) {
   const existing = db.getAllProfiles();
-  if (existing.length === 0) {
-    const defaultProfiles: ProxyProfile[] = [
-      {
-        id: 'builtin-tor-snowflake',
-        name: 'پل تور Snowflake (بدون VPS - جهانی)',
-        protocol: 'tor',
-        category: 'no-vps',
-        server: '127.0.0.1',
-        port: 9050,
-        torBridgeType: 'snowflake',
-        torBridgeString: 'bridge snowflake 192.0.2.3:1 2B280B23E1107BB62B72614776F1E274DD9C0A0C',
-        isBuiltin: true,
-        failureCount: 0,
-        successRate: 98,
-        createdAt: Date.now(),
-      },
-      {
-        id: 'builtin-vless-reality-template',
-        name: 'سرور اختصاصی VLESS Reality (پیش‌فرض)',
-        protocol: 'vless',
-        category: 'vps',
-        server: 'de.gateway.example.com',
-        port: 443,
-        uuid: 'a68ef30f-2f83-4a57-b08e-8a16dbd78fa1',
-        security: 'reality',
-        sni: 'www.microsoft.com',
-        publicKey: '6XzM_o52q2Yj_aXpU1Z_Y68E8F30F2F834A57B08E8A',
-        shortId: '6ba85b54',
-        fingerprint: 'chrome',
-        transport: 'tcp',
-        isBuiltin: true,
-        failureCount: 0,
-        successRate: 95,
-        createdAt: Date.now() - 1000,
-      },
-      {
-        id: 'builtin-hysteria2-template',
-        name: 'سرور پرسرعت Hysteria 2 (UDP Brutal)',
-        protocol: 'hysteria2',
-        category: 'vps',
-        server: 'nl.fastroute.example.com',
-        port: 8443,
-        password: 'sample_secure_hysteria_pass',
-        security: 'tls',
-        sni: 'nl.fastroute.example.com',
-        transport: 'quic',
-        isBuiltin: true,
-        failureCount: 0,
-        successRate: 92,
-        createdAt: Date.now() - 2000,
-      }
-    ];
 
-    for (const p of defaultProfiles) {
-      db.saveProfile(p);
+  // Clean up old non-functional demo domains if present
+  for (const p of existing) {
+    if (p.server && p.server.includes('example.com')) {
+      db.deleteProfile(p.id);
     }
+  }
+
+  const refreshed = db.getAllProfiles();
+  const hasDirect = refreshed.some((p) => p.protocol === 'direct');
+
+  if (!hasDirect) {
+    db.saveProfile({
+      id: 'builtin-direct-gateway',
+      name: 'مسیر مستقیم سرور / اینترنت آزاد (Direct Gateway)',
+      protocol: 'direct',
+      category: 'vps',
+      server: '127.0.0.1',
+      port: 0,
+      isBuiltin: true,
+      failureCount: 0,
+      successRate: 100,
+      createdAt: Date.now(),
+    });
+  }
+
+  const hasTor = refreshed.some((p) => p.protocol === 'tor');
+  if (!hasTor) {
+    db.saveProfile({
+      id: 'builtin-tor-snowflake',
+      name: 'پل تور Snowflake (بدون VPS - سراسری)',
+      protocol: 'tor',
+      category: 'no-vps',
+      server: '127.0.0.1',
+      port: 9050,
+      torBridgeType: 'snowflake',
+      torBridgeString: 'bridge snowflake 192.0.2.3:1 2B280B23E1107BB62B72614776F1E274DD9C0A0C',
+      isBuiltin: true,
+      failureCount: 0,
+      successRate: 98,
+      createdAt: Date.now() - 1000,
+    });
   }
 }

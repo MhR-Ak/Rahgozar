@@ -35,6 +35,18 @@ const mockApi = {
   }),
   getProfiles: async (): Promise<ProxyProfile[]> => [
     {
+      id: 'builtin-direct-gateway',
+      name: 'مسیر مستقیم سرور / اینترنت آزاد (Direct Gateway)',
+      protocol: 'direct',
+      category: 'vps',
+      server: '127.0.0.1',
+      port: 0,
+      isBuiltin: true,
+      failureCount: 0,
+      successRate: 100,
+      createdAt: Date.now(),
+    },
+    {
       id: 'demo-1',
       name: 'پل تور Snowflake (بدون VPS - سراسری)',
       protocol: 'tor',
@@ -45,7 +57,7 @@ const mockApi = {
       isBuiltin: true,
       failureCount: 0,
       successRate: 98,
-      createdAt: Date.now(),
+      createdAt: Date.now() - 1000,
     },
     {
       id: 'demo-2',

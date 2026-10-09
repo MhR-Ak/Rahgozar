@@ -50,6 +50,7 @@ export interface DiagnosisResult {
 }
 
 export type ProfileProtocol =
+  | 'direct'
   | 'vless'
   | 'vmess'
   | 'trojan'

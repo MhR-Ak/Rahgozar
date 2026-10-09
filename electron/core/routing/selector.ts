@@ -70,6 +70,11 @@ export class AdaptiveTransportSelector {
         return p.protocol === 'tor' || p.category === 'no-vps';
       }
 
+      // If active filtering (SNI/TCP/UDP) is detected, direct connection cannot bypass it
+      if (severity >= 2 && p.protocol === 'direct') {
+        return false;
+      }
+
       // If UDP is heavily blocked, eliminate pure UDP protocols
       if (severity === 4 && (p.protocol === 'tuic' || p.protocol === 'wireguard')) {
         return false;
@@ -103,6 +108,11 @@ export class AdaptiveTransportSelector {
 
     // Failure penalty
     score -= (profile.failureCount || 0) * 20;
+
+    // Direct gateway bonus on clean networks / VPS environments
+    if (profile.protocol === 'direct') {
+      score += (severity === 0 ? 60 : -40);
+    }
 
     // Protocol bonus based on resistance to current severity
     if (severity >= 2) {

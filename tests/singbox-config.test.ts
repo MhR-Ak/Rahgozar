@@ -93,4 +93,24 @@ describe('SingBox Config Generator Tests', () => {
     expect(irRule).toBeDefined();
     expect(irRule.outbound).toBe('direct');
   });
+
+  it('generates direct outbound for direct gateway mode', () => {
+    const profile: ProxyProfile = {
+      id: 'test-direct',
+      name: 'Direct Gateway',
+      protocol: 'direct',
+      category: 'vps',
+      server: '127.0.0.1',
+      port: 0,
+      failureCount: 0,
+      successRate: 100,
+      createdAt: Date.now(),
+    };
+
+    const config = SingBoxConfigGenerator.generate(profile, sampleSettings);
+    const proxyOutbound = config.outbounds.find((o: any) => o.tag === 'proxy');
+
+    expect(proxyOutbound).toBeDefined();
+    expect(proxyOutbound.type).toBe('direct');
+  });
 });

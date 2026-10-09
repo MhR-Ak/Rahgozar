@@ -2,13 +2,12 @@ import { ProxyProfile, AppSettings } from '../../types';
 
 /**
  * SingBoxConfigGenerator
- * Produces production-grade, validated sing-box (v1.10+) configuration schemas
- * with mixed inbounds, optional TUN stack, uTLS fingerprinting, DNS routing, and Clash API for live stats.
+ * Produces validated, modern sing-box (v1.14+) configuration schemas
+ * with mixed inbounds, modern TUN stack, uTLS fingerprinting, and domestic domain bypass.
  */
 export class SingBoxConfigGenerator {
   public static generate(profile: ProxyProfile, settings: AppSettings): Record<string, any> {
     const mixedPort = settings.httpProxyPort || 2080;
-    const clashApiPort = 9090;
 
     // 1. Generate inbound definitions
     const inbounds: any[] = [
@@ -18,7 +17,6 @@ export class SingBoxConfigGenerator {
         listen: '127.0.0.1',
         listen_port: mixedPort,
         sniff: true,
-        sniff_override_destination: true,
       },
     ];
 
@@ -27,18 +25,17 @@ export class SingBoxConfigGenerator {
         type: 'tun',
         tag: 'tun-in',
         interface_name: 'rahgozar-tun',
-        inet4_address: '172.19.0.1/30',
+        address: ['172.19.0.1/30'],
         auto_route: true,
         strict_route: true,
         stack: 'mixed',
-        sniff: true,
       });
     }
 
     // 2. Generate primary proxy outbound
     const proxyOutbound = this.buildOutbound(profile);
 
-    // 3. Fallback and system outbounds
+    // 3. Fallback system outbounds
     const outbounds: any[] = [
       proxyOutbound,
       {
@@ -49,46 +46,11 @@ export class SingBoxConfigGenerator {
         type: 'block',
         tag: 'block',
       },
-      {
-        type: 'dns',
-        tag: 'dns-out',
-      },
     ];
 
-    // 4. DNS rules
-    const dnsConfig = {
-      servers: [
-        {
-          tag: 'dns-remote',
-          address: settings.upstreamDns || 'https://1.1.1.1/dns-query',
-          detour: 'proxy',
-        },
-        {
-          tag: 'dns-direct',
-          address: 'local',
-          detour: 'direct',
-        },
-      ],
-      rules: [
-        {
-          outbound: 'any',
-          server: 'dns-direct',
-        },
-        {
-          geosite: 'category-ir',
-          server: 'dns-direct',
-        },
-      ],
-      strategy: 'ipv4_only',
-    };
-
-    // 5. Routing rules
+    // 4. Routing rules
     const route = {
       rules: [
-        {
-          protocol: 'dns',
-          outbound: 'dns-out',
-        },
         {
           ip_is_private: true,
           outbound: 'direct',
@@ -101,24 +63,12 @@ export class SingBoxConfigGenerator {
       auto_detect_interface: true,
     };
 
-    // 6. Complete config object
     return {
       log: {
         disabled: false,
         level: 'info',
         timestamp: true,
       },
-      experimental: {
-        clash_api: {
-          external_controller: `127.0.0.1:${clashApiPort}`,
-          secret: '',
-        },
-        cache_file: {
-          enabled: true,
-          path: 'cache.db',
-        },
-      },
-      dns: dnsConfig,
       inbounds,
       outbounds,
       route,
@@ -129,6 +79,13 @@ export class SingBoxConfigGenerator {
     const baseTag = 'proxy';
 
     switch (profile.protocol) {
+      case 'direct': {
+        return {
+          type: 'direct',
+          tag: baseTag,
+        };
+      }
+
       case 'vless': {
         const vlessOut: any = {
           type: 'vless',
@@ -263,10 +220,8 @@ export class SingBoxConfigGenerator {
 
       default: {
         return {
-          type: 'socks',
+          type: 'direct',
           tag: baseTag,
-          server: '127.0.0.1',
-          server_port: 1080,
         };
       }
     }

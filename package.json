@@ -24,7 +24,14 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "shortcutName": "Rahgozar"
-    }
+    },
+    "extraResources": [
+      {
+        "from": "bin",
+        "to": "bin",
+        "filter": ["**/*"]
+      }
+    ]
   },
   "keywords": [
     "rahgozar",
